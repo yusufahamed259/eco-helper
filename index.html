@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Eco Helper</title>
+<title>Eco Helper Pro</title>
 
 <style>
 body {
   font-family: Arial;
-  background: #e8f5e9;
+  background: #121212;
+  color: white;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,12 +16,11 @@ body {
 }
 
 .container {
-  background: white;
+  background: #1e1e1e;
   padding: 20px;
   border-radius: 20px;
-  width: 300px;
+  width: 320px;
   text-align: center;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
 
 input {
@@ -28,32 +28,32 @@ input {
   margin: 8px;
   width: 90%;
   border-radius: 10px;
-  border: 1px solid gray;
+  border: none;
 }
 
 button {
   padding: 10px;
-  margin: 10px;
+  margin: 8px;
   width: 95%;
   border-radius: 10px;
   border: none;
   background: green;
   color: white;
-  font-size: 16px;
-  cursor: pointer;
+  font-size: 15px;
 }
 
-.toggle {
-  background: black;
+.bar {
+  height: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
 }
 
-.dark-mode {
-  background: #121212;
-  color: white;
+.waterBar {
+  background: blue;
 }
 
-.dark-mode .container {
-  background: #1e1e1e;
+.elecBar {
+  background: orange;
 }
 </style>
 
@@ -62,57 +62,58 @@ button {
 <body>
 
 <div class="container">
-  <h1>🌍 Eco Helper</h1>
+  <h2>🌍 Eco Helper Pro</h2>
 
-  <p>Water usage (liters):</p>
-  <input id="water" type="number">
+  <input id="water" type="number" placeholder="Water (liters)">
+  <input id="electricity" type="number" placeholder="Electricity (units)">
 
-  <p>Electricity usage (units):</p>
-  <input id="electricity" type="number">
+  <button onclick="saveData()">Save Entry</button>
 
-  <button onclick="checkUsage()">Check</button>
-  <button class="toggle" onclick="toggleDark()">🌙 Toggle Dark Mode</button>
-
-  <h3 id="result"></h3>
+  <h3 id="score"></h3>
+  <div id="history"></div>
 </div>
 
 <script>
-function checkUsage() {
-  let water = document.getElementById("water").value;
-  let elec = document.getElementById("electricity").value;
+let data = JSON.parse(localStorage.getItem("ecoData")) || [];
 
-  localStorage.setItem("water", water);
-  localStorage.setItem("electricity", elec);
+function saveData() {
+  let water = Number(document.getElementById("water").value);
+  let elec = Number(document.getElementById("electricity").value);
 
-  let msg = "";
+  if (!water || !elec) return;
 
-  if (Number(water) > 100) {
-    msg += "💧 Save water!<br>";
-  } else {
-    msg += "✅ Good water usage!<br>";
-  }
+  let entry = { water, elec };
+  data.push(entry);
 
-  if (Number(elec) > 10) {
-    msg += "⚡ Reduce electricity!";
-  } else {
-    msg += "✅ Good electricity!";
-  }
+  localStorage.setItem("ecoData", JSON.stringify(data));
 
-  document.getElementById("result").innerHTML = msg;
+  showData();
 }
 
-function toggleDark() {
-  document.body.classList.toggle("dark-mode");
+function showData() {
+  let historyDiv = document.getElementById("history");
+  historyDiv.innerHTML = "";
+
+  let score = 0;
+
+  data.forEach(entry => {
+    let wBar = `<div class="bar waterBar" style="width:${entry.water}px"></div>`;
+    let eBar = `<div class="bar elecBar" style="width:${entry.elec * 10}px"></div>`;
+
+    historyDiv.innerHTML += `
+      <p>💧 ${entry.water}L | ⚡ ${entry.elec}</p>
+      ${wBar}
+      ${eBar}
+    `;
+
+    if (entry.water <= 100) score++;
+    if (entry.elec <= 10) score++;
+  });
+
+  document.getElementById("score").innerText = "🏆 Eco Score: " + score;
 }
 
-// Load saved data
-window.onload = function() {
-  let water = localStorage.getItem("water");
-  let elec = localStorage.getItem("electricity");
-
-  if (water !== null) document.getElementById("water").value = water;
-  if (elec !== null) document.getElementById("electricity").value = elec;
-};
+showData();
 </script>
 
 </body>
