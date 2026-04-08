@@ -1,45 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Eco Helper</title>
-<style>
-body {
-  font-family: Arial;
-  text-align: center;
-  background: #e8f5e9;
-}
-input {
-  padding: 5px;
-  margin: 5px;
-}
-button {
-  padding: 10px;
-  background: green;
-  color: white;
-  border: none;
-}
-</style>
-</head>
-<body>
-
-<h1>🌍 Eco Helper</h1>
-
-<p>Water usage (liters):</p>
-<input id="water" type="number">
-
-<p>Electricity usage (units):</p>
-<input id="electricity" type="number">
-
-<br><br>
-<button onclick="checkUsage()">Check</button>
-
-<h2 id="result"></h2>
-
 <script>
 function checkUsage() {
   let water = document.getElementById("water").value;
   let elec = document.getElementById("electricity").value;
-  
+
+  // Save data
+  localStorage.setItem("water", water);
+  localStorage.setItem("electricity", elec);
+
   let msg = "";
 
   if (water > 100) {
@@ -56,7 +23,13 @@ function checkUsage() {
 
   document.getElementById("result").innerHTML = msg;
 }
-</script>
 
-</body>
-</html>
+// Load saved data
+window.onload = function() {
+  let water = localStorage.getItem("water");
+  let elec = localStorage.getItem("electricity");
+
+  if (water) document.getElementById("water").value = water;
+  if (elec) document.getElementById("electricity").value = elec;
+};
+</script>
