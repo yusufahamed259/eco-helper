@@ -76,73 +76,41 @@ button {
   <div id="history"></div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+
 <script>
-// LOGIN SYSTEM
+const firebaseConfig = {
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// SIGN UP
 function signup() {
-  let user = document.getElementById("username").value;
+  let email = document.getElementById("username").value;
   let pass = document.getElementById("password").value;
 
-  if (!user || !pass) return;
-
-  localStorage.setItem("user", user);
-  localStorage.setItem("pass", pass);
-
-  document.getElementById("loginMsg").innerText = "✅ Account created!";
+  auth.createUserWithEmailAndPassword(email, pass)
+    .then(() => alert("Account created!"))
+    .catch(err => alert(err.message));
 }
 
+// LOGIN
 function login() {
-  let user = document.getElementById("username").value;
+  let email = document.getElementById("username").value;
   let pass = document.getElementById("password").value;
 
-  let savedUser = localStorage.getItem("user");
-  let savedPass = localStorage.getItem("pass");
-
-  if (user === savedUser && pass === savedPass) {
-    document.getElementById("loginPage").classList.add("hidden");
-    document.getElementById("appPage").classList.remove("hidden");
-    showData();
-  } else {
-    document.getElementById("loginMsg").innerText = "❌ Wrong login!";
-  }
-}
-
-function logout() {
-  location.reload();
-}
-
-// ECO APP DATA
-let data = JSON.parse(localStorage.getItem("ecoData")) || [];
-
-function saveData() {
-  let water = Number(document.getElementById("water").value);
-  let elec = Number(document.getElementById("electricity").value);
-
-  if (!water || !elec) return;
-
-  let entry = { water, elec };
-  data.push(entry);
-
-  localStorage.setItem("ecoData", JSON.stringify(data));
-
-  showData();
-}
-
-function showData() {
-  let historyDiv = document.getElementById("history");
-  historyDiv.innerHTML = "";
-
-  let score = 0;
-
-  data.forEach(entry => {
-    historyDiv.innerHTML += `<p>💧 ${entry.water}L | ⚡ ${entry.elec}</p>`;
-
-    if (entry.water <= 100) score++;
-    if (entry.elec <= 10) score++;
-  });
-
-  document.getElementById("score").innerText = "🏆 Eco Score: " + score;
+  auth.signInWithEmailAndPassword(email, pass)
+    .then(() => {
+      document.getElementById("loginPage").classList.add("hidden");
+      document.getElementById("appPage").classList.remove("hidden");
+    })
+    .catch(err => alert("Login failed"));
 }
 </script>
-
 </body>
 </html>
