@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Eco Helper Pro</title>
-<link rel="manifest" href="manifest.json">
+
 <style>
 body {
   font-family: Arial;
@@ -39,21 +39,10 @@ button {
   border: none;
   background: green;
   color: white;
-  font-size: 15px;
 }
 
-.bar {
-  height: 10px;
-  margin: 5px 0;
-  border-radius: 5px;
-}
-
-.waterBar {
-  background: blue;
-}
-
-.elecBar {
-  background: orange;
+.hidden {
+  display: none;
 }
 </style>
 
@@ -61,19 +50,67 @@ button {
 
 <body>
 
-<div class="container">
-  <h2>🌍 Eco Helper Pro</h2>
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="container">
+  <h2>🔐 Login</h2>
+  <input id="username" placeholder="Username">
+  <input id="password" type="password" placeholder="Password">
+  
+  <button onclick="login()">Login</button>
+  <button onclick="signup()">Sign Up</button>
+
+  <p id="loginMsg"></p>
+</div>
+
+<!-- APP PAGE -->
+<div id="appPage" class="container hidden">
+  <h2>🌍 Eco Helper</h2>
 
   <input id="water" type="number" placeholder="Water (liters)">
   <input id="electricity" type="number" placeholder="Electricity (units)">
 
   <button onclick="saveData()">Save Entry</button>
+  <button onclick="logout()">Logout</button>
 
   <h3 id="score"></h3>
   <div id="history"></div>
 </div>
 
 <script>
+// LOGIN SYSTEM
+function signup() {
+  let user = document.getElementById("username").value;
+  let pass = document.getElementById("password").value;
+
+  if (!user || !pass) return;
+
+  localStorage.setItem("user", user);
+  localStorage.setItem("pass", pass);
+
+  document.getElementById("loginMsg").innerText = "✅ Account created!";
+}
+
+function login() {
+  let user = document.getElementById("username").value;
+  let pass = document.getElementById("password").value;
+
+  let savedUser = localStorage.getItem("user");
+  let savedPass = localStorage.getItem("pass");
+
+  if (user === savedUser && pass === savedPass) {
+    document.getElementById("loginPage").classList.add("hidden");
+    document.getElementById("appPage").classList.remove("hidden");
+    showData();
+  } else {
+    document.getElementById("loginMsg").innerText = "❌ Wrong login!";
+  }
+}
+
+function logout() {
+  location.reload();
+}
+
+// ECO APP DATA
 let data = JSON.parse(localStorage.getItem("ecoData")) || [];
 
 function saveData() {
@@ -97,14 +134,7 @@ function showData() {
   let score = 0;
 
   data.forEach(entry => {
-    let wBar = `<div class="bar waterBar" style="width:${entry.water}px"></div>`;
-    let eBar = `<div class="bar elecBar" style="width:${entry.elec * 10}px"></div>`;
-
-    historyDiv.innerHTML += `
-      <p>💧 ${entry.water}L | ⚡ ${entry.elec}</p>
-      ${wBar}
-      ${eBar}
-    `;
+    historyDiv.innerHTML += `<p>💧 ${entry.water}L | ⚡ ${entry.elec}</p>`;
 
     if (entry.water <= 100) score++;
     if (entry.elec <= 10) score++;
@@ -112,8 +142,6 @@ function showData() {
 
   document.getElementById("score").innerText = "🏆 Eco Score: " + score;
 }
-
-showData();
 </script>
 
 </body>
