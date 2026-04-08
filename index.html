@@ -6,21 +6,54 @@
 <style>
 body {
   font-family: Arial;
-  text-align: center;
   background: #e8f5e9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container {
+  background: white;
+  padding: 20px;
+  border-radius: 20px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
 
 input {
-  padding: 8px;
+  padding: 10px;
   margin: 8px;
+  width: 90%;
+  border-radius: 10px;
+  border: 1px solid gray;
 }
 
 button {
-  padding: 10px 15px;
+  padding: 10px;
+  margin: 10px;
+  width: 95%;
+  border-radius: 10px;
+  border: none;
   background: green;
   color: white;
-  border: none;
+  font-size: 16px;
   cursor: pointer;
+}
+
+.toggle {
+  background: black;
+}
+
+.dark-mode {
+  background: #121212;
+  color: white;
+}
+
+.dark-mode .container {
+  background: #1e1e1e;
 }
 </style>
 
@@ -28,25 +61,26 @@ button {
 
 <body>
 
-<h1>🌍 Eco Helper</h1>
+<div class="container">
+  <h1>🌍 Eco Helper</h1>
 
-<p>Water usage (liters):</p>
-<input id="water" type="number">
+  <p>Water usage (liters):</p>
+  <input id="water" type="number">
 
-<p>Electricity usage (units):</p>
-<input id="electricity" type="number">
+  <p>Electricity usage (units):</p>
+  <input id="electricity" type="number">
 
-<br><br>
-<button onclick="checkUsage()">Check</button>
+  <button onclick="checkUsage()">Check</button>
+  <button class="toggle" onclick="toggleDark()">🌙 Toggle Dark Mode</button>
 
-<h2 id="result"></h2>
+  <h3 id="result"></h3>
+</div>
 
 <script>
 function checkUsage() {
   let water = document.getElementById("water").value;
   let elec = document.getElementById("electricity").value;
 
-  // Save data
   localStorage.setItem("water", water);
   localStorage.setItem("electricity", elec);
 
@@ -67,18 +101,17 @@ function checkUsage() {
   document.getElementById("result").innerHTML = msg;
 }
 
-// Load saved data when page opens
+function toggleDark() {
+  document.body.classList.toggle("dark-mode");
+}
+
+// Load saved data
 window.onload = function() {
   let water = localStorage.getItem("water");
   let elec = localStorage.getItem("electricity");
 
-  if (water !== null) {
-    document.getElementById("water").value = water;
-  }
-
-  if (elec !== null) {
-    document.getElementById("electricity").value = elec;
-  }
+  if (water !== null) document.getElementById("water").value = water;
+  if (elec !== null) document.getElementById("electricity").value = elec;
 };
 </script>
 
