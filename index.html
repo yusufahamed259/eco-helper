@@ -1,3 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Eco Helper</title>
+
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+  background: #e8f5e9;
+}
+
+input {
+  padding: 8px;
+  margin: 8px;
+}
+
+button {
+  padding: 10px 15px;
+  background: green;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>🌍 Eco Helper</h1>
+
+<p>Water usage (liters):</p>
+<input id="water" type="number">
+
+<p>Electricity usage (units):</p>
+<input id="electricity" type="number">
+
+<br><br>
+<button onclick="checkUsage()">Check</button>
+
+<h2 id="result"></h2>
+
 <script>
 function checkUsage() {
   let water = document.getElementById("water").value;
@@ -9,13 +52,13 @@ function checkUsage() {
 
   let msg = "";
 
-  if (water > 100) {
+  if (Number(water) > 100) {
     msg += "💧 Save water!<br>";
   } else {
     msg += "✅ Good water usage!<br>";
   }
 
-  if (elec > 10) {
+  if (Number(elec) > 10) {
     msg += "⚡ Reduce electricity!";
   } else {
     msg += "✅ Good electricity!";
@@ -24,12 +67,20 @@ function checkUsage() {
   document.getElementById("result").innerHTML = msg;
 }
 
-// Load saved data
+// Load saved data when page opens
 window.onload = function() {
   let water = localStorage.getItem("water");
   let elec = localStorage.getItem("electricity");
 
-  if (water) document.getElementById("water").value = water;
-  if (elec) document.getElementById("electricity").value = elec;
+  if (water !== null) {
+    document.getElementById("water").value = water;
+  }
+
+  if (elec !== null) {
+    document.getElementById("electricity").value = elec;
+  }
 };
 </script>
+
+</body>
+</html>
